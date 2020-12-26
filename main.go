@@ -21,12 +21,13 @@ func main() {
 	}
 
 	freader, err := reentrantReader(f, func(reader io.Reader) error {
-		buf := make([]byte, 0, 512)
+		buf := make([]byte, 512)
 		n, err := reader.Read(buf)
+		if err != nil {
+			return err
+		}
 
-		log.Println("!!!!!!!!!!!!!!!!", n, err)
-
-		log.Println("!!!!!!!!!!!!!!!!", http.DetectContentType(buf))
+		log.Println("!!!!!!!!!!!!!!!!", http.DetectContentType(buf[:n])) //application/octet-stream
 
 		return nil
 	})
@@ -67,7 +68,7 @@ func main() {
 }
 
 func reentrantReader(r io.Reader, f func(io.Reader) error) (io.Reader, error) {
-	buf := bytes.NewBuffer(make([]byte, 0, 512))
+	buf := bytes.NewBuffer([]byte{})
 	err := f(io.TeeReader(r, buf))
 	return io.MultiReader(buf, r), err
 }
