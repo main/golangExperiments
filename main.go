@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/gabriel-vasile/mimetype"
 	"io"
 	"log"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	fname := "MVI_8511.MOV"
+	fname := "MVI_8511.MOV" //сторонняя библиотека для mimego get github.com/gabriel-vasile/mimetype
 
 	f, err := os.Open(fname)
 	if err != nil {
@@ -28,6 +29,7 @@ func main() {
 		}
 
 		log.Println("!!!!!!!!!!!!!!!!", http.DetectContentType(buf[:n])) //application/octet-stream
+		log.Println("!!!!!!!!!!!!!!!!", mimetype.Detect(buf[:n]))        //application/octet-stream
 
 		return nil
 	})
